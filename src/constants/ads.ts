@@ -2,9 +2,9 @@ export interface AdBanner {
   id: string;
   title: string;
   subtitle?: string;
-  imageUrl: string;
   linkUrl?: string;
-  bgColor: string;
+  gradient: string;
+  iconBg: string;
 }
 
 export const ADS: AdBanner[] = [
@@ -12,21 +12,21 @@ export const ADS: AdBanner[] = [
     id: 'promo-1',
     title: 'Free Delivery',
     subtitle: 'On your first order',
-    imageUrl: '/ads/promo1.svg',
-    bgColor: '#f3f4f6',
+    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    iconBg: 'rgba(255,255,255,0.2)',
   },
   {
     id: 'promo-2',
     title: '50% Off Groceries',
     subtitle: 'This weekend only',
-    imageUrl: '/ads/promo2.svg',
-    bgColor: '#fef3c7',
+    gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    iconBg: 'rgba(255,255,255,0.2)',
   },
   {
     id: 'promo-3',
     title: 'Dine & Save',
     subtitle: 'Cashback on all orders',
-    imageUrl: '/ads/promo3.svg',
-    bgColor: '#dbeafe',
+    gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+    iconBg: 'rgba(255,255,255,0.2)',
   },
 ];
