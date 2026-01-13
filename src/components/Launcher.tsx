@@ -28,6 +28,10 @@ const DebugLogs = () => {
         },
         fail: (err: any) => {
           setLogs((prevLogs) => [...prevLogs, `[FAIL]: ${JSON.stringify(err)}`]);
+        },
+        complete: () => {
+          // Actions to perform upon completion (optional)
+          setLogs((prevLogs) => [...prevLogs, 'completed!']);
         }
       });
     } catch (err) {
