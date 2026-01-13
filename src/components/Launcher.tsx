@@ -17,11 +17,29 @@ const DebugLogs = () => {
 
   useEffect(() => {
     if (!sdkLoaded) return;
+
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLogs((prevLogs) => [...prevLogs, 'Loading SDK...']);
+    setLogs((prevLogs) => [...prevLogs, 'Getting Version...']);
+    setLogs((prevLogs) => [...prevLogs, `version: ${my.SDKVersion}`]);
+
+    setLogs((prevLogs) => [...prevLogs, 'Getting System Info...']);
+    my.getSystemInfo({
+      success: (res: any) => {
+        setLogs((prevLogs) => [...prevLogs, `got system info: ${JSON.stringify(res)}`]);
+      }
+    })
+
+    setLogs((prevLogs) => [...prevLogs, 'Getting Run Scene...']);
+    my.getRunScene({
+      success(result: any) {
+        setLogs((prevLogs) => [...prevLogs, `mini version: ${JSON.stringify(result)}`]);
+      },
+    })
+
+    setLogs((prevLogs) => [...prevLogs, 'getting auth...']);
     try {
       my.getAuthCode({
-        scopes: ['auth_user'],
+        scopes: 'auth_user',
         success: (res: any) => {
           setLogs((prevLogs) => [...prevLogs, `got auth: ${JSON.stringify(res)}`]);
           setAuthCode(res.authCode);
