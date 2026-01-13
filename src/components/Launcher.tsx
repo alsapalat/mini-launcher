@@ -43,6 +43,7 @@ const DebugLogs = () => {
   const handleCopyToClipboard = (text: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     navigator.clipboard.writeText(text);
+    setLogs((prevLogs) => [...prevLogs, 'copied to clipboard']);
   }
 
   if (!show) {
