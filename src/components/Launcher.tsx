@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MINI_APPS, type Category } from '../constants/miniApps';
 import { Header } from './Header';
 import { AdSlider } from './AdSlider';
@@ -8,8 +8,29 @@ import { AppGrid } from './AppGrid';
 const DebugLogs = () => {
   const [t, setT] = useState(new Date().getTime());
   const [show, setShow] = useState(false);
+
+  const [authCode, setAuthCode] = useState('??');
+
   const queryParams = new URLSearchParams(window.location.search);
   const queryParamsInJson = Object.fromEntries(queryParams.entries());
+
+  const sdkLoaded = typeof my !== 'undefined';
+
+  useEffect(() => {
+    if (!sdkLoaded) return;
+    my.getAuthCode({
+      scopes: 'auth_user',
+      success: (res: any) => {
+        setAuthCode(res.authCode);
+      },
+    });
+  }, [sdkLoaded]);
+
+  const handleCopyToClipboard = (text: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    navigator.clipboard.writeText(text);
+  }
+
   if (!show) {
     return (
       <div className="z-50 fixed bottom-0 left-0 w-full bg-black/40 text-white text-xs p-1 font-mono font-light overflow-auto">
@@ -19,11 +40,12 @@ const DebugLogs = () => {
   }
   return (
     <div key={t} className="z-50 fixed bottom-0 left-0 w-full h-40 bg-black/40 text-white text-xs p-1 font-mono font-light overflow-auto">
-      <div><button type="button" onClick={() => {
+      <div className="flex justify-end"><button type="button" onClick={() => {
         setT(new Date().getTime());
       }}>Refresh</button></div>
       <div>
         <div>JSAPI: {typeof my !== 'undefined' ? 'YES' : 'NO'}</div>
+        <div>AuthCode: <a className="text-underline" href="#" onClick={handleCopyToClipboard(authCode)}>{authCode}</a></div>
       </div>
       <div>Params:</div>
       <div>
