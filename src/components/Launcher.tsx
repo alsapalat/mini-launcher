@@ -6,6 +6,7 @@ import { CategoryFilter } from './CategoryFilter';
 import { AppGrid } from './AppGrid';
 
 const DebugLogs = () => {
+  const [t, setT] = useState(new Date().getTime());
   const [show, setShow] = useState(false);
   const queryParams = new URLSearchParams(window.location.search);
   const queryParamsInJson = Object.fromEntries(queryParams.entries());
@@ -17,7 +18,10 @@ const DebugLogs = () => {
     )
   }
   return (
-    <div className="z-50 fixed bottom-0 left-0 w-full h-40 bg-black/40 text-white text-xs p-1 font-mono font-light overflow-auto">
+    <div key={t} className="z-50 fixed bottom-0 left-0 w-full h-40 bg-black/40 text-white text-xs p-1 font-mono font-light overflow-auto">
+      <div><button type="button" onClick={() => {
+        setT(new Date().getTime());
+      }}>Refresh</button></div>
       <div>
         <div>JSAPI: {typeof my !== 'undefined' ? 'YES' : 'NO'}</div>
       </div>
