@@ -25,11 +25,14 @@ const DebugLogs = () => {
     setLogs((prevLogs) => [...prevLogs, typeof my.getAuthCode]);
     try {
       my.getAuthCode({
-        scopes: 'auth_user',
+        scopes: ['auth_user'],
         success: (res: any) => {
           setLogs((prevLogs) => [...prevLogs, `got auth: ${JSON.stringify(res)}`]);
           setAuthCode(res.authCode);
         },
+        fail: (err: any) => {
+          setLogs((prevLogs) => [...prevLogs, `[FAIL]: ${JSON.stringify(err)}`]);
+        }
       });
     } catch (err) {
       console.log(err);
