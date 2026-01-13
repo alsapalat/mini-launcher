@@ -27,7 +27,7 @@ const DebugLogs = () => {
       my.getAuthCode({
         scopes: 'auth_user',
         success: (res: any) => {
-          setLogs((prevLogs) => [...prevLogs, 'Got auth code...']);
+          setLogs((prevLogs) => [...prevLogs, `got auth: ${JSON.stringify(res)}`]);
           setAuthCode(res.authCode);
         },
       });
