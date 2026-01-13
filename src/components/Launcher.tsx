@@ -22,6 +22,7 @@ const DebugLogs = () => {
     if (!sdkLoaded) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLogs((prevLogs) => [...prevLogs, 'Loading SDK...']);
+    setLogs((prevLogs) => [...prevLogs, typeof my.getAuthCode]);
     try {
       my.getAuthCode({
         scopes: 'auth_user',
