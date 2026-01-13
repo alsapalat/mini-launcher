@@ -20,7 +20,7 @@ const DebugLogs = () => {
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLogs((prevLogs) => [...prevLogs, 'Getting Version...']);
-    setLogs((prevLogs) => [...prevLogs, `version: ${my.SDKVersion}`]);
+    setLogs((prevLogs) => [...prevLogs, `version: ${JSON.stringify(my)}`]);
 
     setLogs((prevLogs) => [...prevLogs, 'Getting System Info...']);
     try {
