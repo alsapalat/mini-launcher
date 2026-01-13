@@ -13,16 +13,12 @@ const DebugLogs = () => {
 
   const [logs, setLogs] = useState<string[]>([]);
 
-  const queryParams = new URLSearchParams(window.location.search);
-  const queryParamsInJson = Object.fromEntries(queryParams.entries());
-
   const sdkLoaded = Boolean(typeof my !== 'undefined');
 
   useEffect(() => {
     if (!sdkLoaded) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLogs((prevLogs) => [...prevLogs, 'Loading SDK...']);
-    setLogs((prevLogs) => [...prevLogs, typeof my.getAuthCode]);
     try {
       my.getAuthCode({
         scopes: ['auth_user'],
@@ -60,10 +56,6 @@ const DebugLogs = () => {
       <div>
         <div>JSAPI: {sdkLoaded ? 'YES' : 'NO'}</div>
         <div>AuthCode: <a className="text-underline" href="#" onClick={handleCopyToClipboard(authCode)}>{authCode}</a></div>
-      </div>
-      <div>Params:</div>
-      <div>
-        <pre>{JSON.stringify(queryParamsInJson, null, 2)}</pre>
       </div>
       <div>
         <div>Logs:</div>
