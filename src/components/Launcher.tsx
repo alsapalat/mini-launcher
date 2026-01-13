@@ -7,7 +7,7 @@ import { AppGrid } from './AppGrid';
 
 const DebugLogs = () => {
   const [t, setT] = useState(new Date().getTime());
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
 
   const [authCode, setAuthCode] = useState('??');
 
@@ -55,6 +55,32 @@ const DebugLogs = () => {
   }
   return (
     <div key={t} className="z-50 fixed bottom-0 left-0 w-full h-40 bg-black/40 text-white text-xs p-1 font-mono font-light overflow-auto">
+      <div className="flex justify-center"><button type="button" onClick={() => {
+        if (!sdkLoaded) {
+          setLogs((prevLogs) => [...prevLogs, 'SDK not loaded']);
+          return;
+        }
+        my.alert({
+          title: 'Test Alert!!',
+          content: window.navigator.userAgent,
+          buttonText: 'Alert Button',
+          success: function (res: any) {
+            my.alert({
+              content: 'success!' + JSON.stringify(res),
+            });
+          },
+          fail: function () {
+            my.alert({
+              content: 'fail!',
+            });
+          },
+          complete: function () {
+            my.alert({
+              content: 'complete!',
+            });
+          },
+        });
+      }}>Test Alert</button></div>
       <div className="flex justify-end"><button type="button" onClick={() => {
         setT(new Date().getTime());
       }}>Refresh</button></div>
