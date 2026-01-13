@@ -11,19 +11,29 @@ const DebugLogs = () => {
 
   const [authCode, setAuthCode] = useState('??');
 
+  const [logs, setLogs] = useState<string[]>([]);
+
   const queryParams = new URLSearchParams(window.location.search);
   const queryParamsInJson = Object.fromEntries(queryParams.entries());
 
-  const sdkLoaded = typeof my !== 'undefined';
+  const sdkLoaded = Boolean(typeof my !== 'undefined');
 
   useEffect(() => {
     if (!sdkLoaded) return;
-    my.getAuthCode({
-      scopes: 'auth_user',
-      success: (res: any) => {
-        setAuthCode(res.authCode);
-      },
-    });
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLogs((prevLogs) => [...prevLogs, 'Loading SDK...']);
+    try {
+      my.getAuthCode({
+        scopes: 'auth_user',
+        success: (res: any) => {
+          setLogs((prevLogs) => [...prevLogs, 'Got auth code...']);
+          setAuthCode(res.authCode);
+        },
+      });
+    } catch (err) {
+      console.log(err);
+      setLogs((prevLogs) => [...prevLogs, '[ERROR] unable to get auth code']);
+    }
   }, [sdkLoaded]);
 
   const handleCopyToClipboard = (text: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -44,7 +54,7 @@ const DebugLogs = () => {
         setT(new Date().getTime());
       }}>Refresh</button></div>
       <div>
-        <div>JSAPI: {typeof my !== 'undefined' ? 'YES' : 'NO'}</div>
+        <div>JSAPI: {sdkLoaded ? 'YES' : 'NO'}</div>
         <div>AuthCode: <a className="text-underline" href="#" onClick={handleCopyToClipboard(authCode)}>{authCode}</a></div>
       </div>
       <div>Params:</div>
