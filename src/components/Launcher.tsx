@@ -51,6 +51,9 @@ const DebugLogs = () => {
       <div>
         <pre>{JSON.stringify(queryParamsInJson, null, 2)}</pre>
       </div>
+      <div className="flex justify-end"><button type="button" onClick={() => {
+        window.location.reload()
+      }}>Refresh Page</button></div>
     </div>
   )
 }
