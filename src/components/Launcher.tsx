@@ -23,18 +23,23 @@ const DebugLogs = () => {
     setLogs((prevLogs) => [...prevLogs, `version: ${my.SDKVersion}`]);
 
     setLogs((prevLogs) => [...prevLogs, 'Getting System Info...']);
-    my.getSystemInfo({
-      success: (res: any) => {
-        setLogs((prevLogs) => [...prevLogs, `got system info: ${JSON.stringify(res)}`]);
-      }
-    })
+    try {
+      my.getSystemInfo({
+        success: (res: any) => {
+          setLogs((prevLogs) => [...prevLogs, `got system info: ${JSON.stringify(res)}`]);
+        }
+      })
+    } catch (err) {
+      console.log(err);
+      setLogs((prevLogs) => [...prevLogs, '[ERROR] unable to get system info']);
+    }
 
-    setLogs((prevLogs) => [...prevLogs, 'Getting Run Scene...']);
-    my.getRunScene({
-      success(result: any) {
-        setLogs((prevLogs) => [...prevLogs, `mini version: ${JSON.stringify(result)}`]);
-      },
-    })
+    // setLogs((prevLogs) => [...prevLogs, 'Getting Run Scene...']);
+    // my.getRunScene({
+    //   success(result: any) {
+    //     setLogs((prevLogs) => [...prevLogs, `mini version: ${JSON.stringify(result)}`]);
+    //   },
+    // })
 
     setLogs((prevLogs) => [...prevLogs, 'getting auth...']);
     try {
