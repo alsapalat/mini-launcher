@@ -34,6 +34,15 @@ const DebugLogs = () => {
       setLogs((prevLogs) => [...prevLogs, '[ERROR] unable to get system info']);
     }
 
+    try {
+      my.getEnv(function(res: any) {
+        setLogs((prevLogs) => [...prevLogs, `env: ${JSON.stringify(res)}`]);
+      });
+    } catch (err) {
+      console.log(err);
+      setLogs((prevLogs) => [...prevLogs, '[ERROR] unable to get env']);
+    }
+
     // setLogs((prevLogs) => [...prevLogs, 'Getting Run Scene...']);
     // my.getRunScene({
     //   success(result: any) {
