@@ -5,6 +5,10 @@ import { AdSlider } from './AdSlider';
 import { CategoryFilter } from './CategoryFilter';
 import { AppGrid } from './AppGrid';
 
+function wait(t: number) {
+  return new Promise((r) => setTimeout(r, t));
+}
+
 const DebugLogs = () => {
   const [t, setT] = useState(new Date().getTime());
   const [show, setShow] = useState(true);
@@ -17,68 +21,74 @@ const DebugLogs = () => {
 
   useEffect(() => {
     if (!sdkLoaded) return;
+    const init = async () => {
+      setLogs((prevLogs) => [...prevLogs, 'Loading...']);
+      await wait (1000);
+      setLogs((prevLogs) => [...prevLogs, 'Timeout end!']);
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLogs((prevLogs) => [...prevLogs, 'Getting Version...']);
-    setLogs((prevLogs) => [...prevLogs, `Version: ${my?.SDKVersion || '??'}`]);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLogs((prevLogs) => [...prevLogs, 'Getting Version...']);
+      setLogs((prevLogs) => [...prevLogs, `Version: ${my?.SDKVersion || '??'}`]);
 
-    my.canIUse('alert')
-      .then((res: any) => {
-        setLogs((prevLogs) => [...prevLogs, `canIUse alert: ${JSON.stringify(res)}`]);
-      })
-      .catch((err: any) => {
+      my.canIUse('alert')
+        .then((res: any) => {
+          setLogs((prevLogs) => [...prevLogs, `canIUse alert: ${JSON.stringify(res)}`]);
+        })
+        .catch((err: any) => {
+          console.log(err);
+          setLogs((prevLogs) => [...prevLogs, '[ERROR] unable to check canIUse for alert']);
+        });
+
+      setLogs((prevLogs) => [...prevLogs, 'Getting System Info...']);
+      try {
+        my.getSystemInfo({
+          success: (res: any) => {
+            setLogs((prevLogs) => [...prevLogs, `got system info: ${JSON.stringify(res)}`]);
+          }
+        })
+      } catch (err) {
         console.log(err);
-        setLogs((prevLogs) => [...prevLogs, '[ERROR] unable to check canIUse for alert']);
-      });
+        setLogs((prevLogs) => [...prevLogs, '[ERROR] unable to get system info']);
+      }
 
-    setLogs((prevLogs) => [...prevLogs, 'Getting System Info...']);
-    try {
-      my.getSystemInfo({
-        success: (res: any) => {
-          setLogs((prevLogs) => [...prevLogs, `got system info: ${JSON.stringify(res)}`]);
-        }
-      })
-    } catch (err) {
-      console.log(err);
-      setLogs((prevLogs) => [...prevLogs, '[ERROR] unable to get system info']);
+      try {
+        my.getEnv(function(res: any) {
+          setLogs((prevLogs) => [...prevLogs, `env: ${JSON.stringify(res)}`]);
+        });
+      } catch (err) {
+        console.log(err);
+        setLogs((prevLogs) => [...prevLogs, '[ERROR] unable to get env']);
+      }
+
+      // setLogs((prevLogs) => [...prevLogs, 'Getting Run Scene...']);
+      // my.getRunScene({
+      //   success(result: any) {
+      //     setLogs((prevLogs) => [...prevLogs, `mini version: ${JSON.stringify(result)}`]);
+      //   },
+      // })
+
+      setLogs((prevLogs) => [...prevLogs, 'getting auth...']);
+      try {
+        my.getAuthCode({
+          scopes: 'auth_user',
+          success: (res: any) => {
+            setLogs((prevLogs) => [...prevLogs, `got auth: ${JSON.stringify(res)}`]);
+            setAuthCode(res.authCode);
+          },
+          fail: (err: any) => {
+            setLogs((prevLogs) => [...prevLogs, `[FAIL]: ${JSON.stringify(err)}`]);
+          },
+          complete: () => {
+            // Actions to perform upon completion (optional)
+            setLogs((prevLogs) => [...prevLogs, 'completed!']);
+          }
+        });
+      } catch (err) {
+        console.log(err);
+        setLogs((prevLogs) => [...prevLogs, '[ERROR] unable to get auth code']);
+      }
     }
-
-    try {
-      my.getEnv(function(res: any) {
-        setLogs((prevLogs) => [...prevLogs, `env: ${JSON.stringify(res)}`]);
-      });
-    } catch (err) {
-      console.log(err);
-      setLogs((prevLogs) => [...prevLogs, '[ERROR] unable to get env']);
-    }
-
-    // setLogs((prevLogs) => [...prevLogs, 'Getting Run Scene...']);
-    // my.getRunScene({
-    //   success(result: any) {
-    //     setLogs((prevLogs) => [...prevLogs, `mini version: ${JSON.stringify(result)}`]);
-    //   },
-    // })
-
-    setLogs((prevLogs) => [...prevLogs, 'getting auth...']);
-    try {
-      my.getAuthCode({
-        scopes: 'auth_user',
-        success: (res: any) => {
-          setLogs((prevLogs) => [...prevLogs, `got auth: ${JSON.stringify(res)}`]);
-          setAuthCode(res.authCode);
-        },
-        fail: (err: any) => {
-          setLogs((prevLogs) => [...prevLogs, `[FAIL]: ${JSON.stringify(err)}`]);
-        },
-        complete: () => {
-          // Actions to perform upon completion (optional)
-          setLogs((prevLogs) => [...prevLogs, 'completed!']);
-        }
-      });
-    } catch (err) {
-      console.log(err);
-      setLogs((prevLogs) => [...prevLogs, '[ERROR] unable to get auth code']);
-    }
+    init();
   }, [sdkLoaded]);
 
   const handleCopyToClipboard = (text: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
