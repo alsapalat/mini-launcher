@@ -5,8 +5,19 @@ import { AdSlider } from './AdSlider';
 import { CategoryFilter } from './CategoryFilter';
 import { AppGrid } from './AppGrid';
 
-function wait(t: number) {
-  return new Promise((r) => setTimeout(r, t));
+function ensureReadyness(log: (msg: string) => void) {
+  return new Promise((r) => {
+    const interval = setInterval(() => {
+      log('trying...');
+      if (typeof my !== 'undefined') {
+        clearInterval(interval);
+        log('api is ready...');
+        r(null);
+      } else {
+        log('waiting for api...');
+      }
+    }, 500);
+  });
 }
 
 const DebugLogs = () => {
@@ -22,22 +33,29 @@ const DebugLogs = () => {
   useEffect(() => {
     if (!sdkLoaded) return;
     const init = async () => {
-      setLogs((prevLogs) => [...prevLogs, 'Loading...']);
-      await wait (1000);
-      setLogs((prevLogs) => [...prevLogs, 'Timeout end!']);
+      setLogs((prevLogs) => [...prevLogs, 'wait...']);
+      await ensureReadyness((log) => {
+        setLogs((prevLogs) => [...prevLogs, log]);
+      });
+      setLogs((prevLogs) => [...prevLogs, 'done!']);
 
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setLogs((prevLogs) => [...prevLogs, 'Getting Version...']);
       setLogs((prevLogs) => [...prevLogs, `Version: ${my?.SDKVersion || '??'}`]);
 
-      my.canIUse('alert')
-        .then((res: any) => {
-          setLogs((prevLogs) => [...prevLogs, `canIUse alert: ${JSON.stringify(res)}`]);
-        })
-        .catch((err: any) => {
-          console.log(err);
-          setLogs((prevLogs) => [...prevLogs, '[ERROR] unable to check canIUse for alert']);
-        });
+      try {
+        my.canIUse('alert')
+          .then((res: any) => {
+            setLogs((prevLogs) => [...prevLogs, `canIUse alert: ${JSON.stringify(res)}`]);
+          })
+          .catch((err: any) => {
+            console.log(err);
+            setLogs((prevLogs) => [...prevLogs, '[ERROR] unable to check canIUse for alert']);
+          });
+      } catch (err) {
+        console.log(err);
+        setLogs((prevLogs) => [...prevLogs, '[ERROR] unable to check alert']);
+      }
 
       setLogs((prevLogs) => [...prevLogs, 'Getting System Info...']);
       try {
