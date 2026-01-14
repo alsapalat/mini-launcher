@@ -20,7 +20,16 @@ const DebugLogs = () => {
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLogs((prevLogs) => [...prevLogs, 'Getting Version...']);
-    setLogs((prevLogs) => [...prevLogs, `version: ${JSON.stringify(my)}`]);
+    setLogs((prevLogs) => [...prevLogs, `Version: ${my?.SDKVersion || '??'}`]);
+
+    my.canIUse('alert')
+      .then((res: any) => {
+        setLogs((prevLogs) => [...prevLogs, `canIUse alert: ${JSON.stringify(res)}`]);
+      })
+      .catch((err: any) => {
+        console.log(err);
+        setLogs((prevLogs) => [...prevLogs, '[ERROR] unable to check canIUse for alert']);
+      });
 
     setLogs((prevLogs) => [...prevLogs, 'Getting System Info...']);
     try {
